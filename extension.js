@@ -6,11 +6,15 @@
    Contains some code from All Windows extension by lyonel
 */
 
-const { Gio, GObject, St, Shell } = imports.gi;
-const Main = imports.ui.main;
-const Meta = imports.gi.Meta;
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Direction = Me.imports.utils.settings.Direction;
+import GObject from 'gi://GObject';
+import St from 'gi://St';
+import Shell from 'gi://Shell';
+import Mtk from 'gi://Mtk';
+
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
+
+import {Direction} from './utils/settings.js';
 
 const ICON_SIZE = 22;
 
@@ -86,7 +90,7 @@ const WindowList = GObject.registerClass(
                 this.box.icon = this.app.create_icon_texture(ICON_SIZE);
                 this.box.style_class = 'focused-app';
                 this.box.set_child(this.box.icon);
-                this.apps_menu.add_actor(this.box);
+                this.apps_menu.add_child(this.box);
             }
         }
 
@@ -97,7 +101,7 @@ const WindowList = GObject.registerClass(
             const anchor = this.side.anchor(width);
             if (this.area?.x !== anchor)
                 // Avoid creating too much rectangles
-                this.area = new Meta.Rectangle({
+                this.area = new Mtk.Rectangle({
                     x: anchor,
                     y: 0,
                     width: ICON_SIZE,
@@ -139,12 +143,14 @@ const WindowList = GObject.registerClass(
     }
 );
 
-class Extension {
-    constructor() {}
+export default class MinimizeShelfExtension extends Extension {
+    constructor(metadata) {
+        super(metadata);
+    }
 
     enable() {
-        Side = new Direction().load();
-        this.eventhandler = Side.settings.connect('changed', this._reload);
+        Side = new Direction(this.getSettings()).load();
+        this.eventhandler = Side.settings.connect('changed', this._reload.bind(this));
 
         this.windowlist = new WindowList(Side);
         this.windowlist._insert();
@@ -156,10 +162,6 @@ class Extension {
     }
 
     _reload() {
-        Main.extensionManager.reloadExtension(Me);
+        Main.extensionManager.reloadExtension(this);
     }
-}
-
-function init() {
-    return new Extension();
 }

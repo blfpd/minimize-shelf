@@ -1,9 +1,10 @@
-const Gio = imports.gi.Gio;
-const GObject = imports.gi.GObject;
-const Gtk = imports.gi.Gtk;
+import GObject from 'gi://GObject';
+import Gtk from 'gi://Gtk';
+import Adw from 'gi://Adw';
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Direction = Me.imports.utils.settings.Direction;
+import {ExtensionPreferences} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+
+import {Direction} from './utils/settings.js';
 
 const _toggle_direction = widget => {
     if (widget.get_active()) Side.save(Side[widget.label]);
@@ -45,10 +46,16 @@ const PrefsWidget = GObject.registerClass(
     }
 );
 
-function init() {
-    Side = new Direction().load();
-}
-
-function buildPrefsWidget() {
-    return new PrefsWidget({ margin_top: 200, margin_side: 160 });
+export default class MinimizeShelfPreferences extends ExtensionPreferences {
+    fillPreferencesWindow(window) {
+        Side = new Direction(this.getSettings()).load();
+        
+        const page = new Adw.PreferencesPage();
+        const group = new Adw.PreferencesGroup();
+        
+        const prefsWidget = new PrefsWidget({ margin_top: 200, margin_side: 160 });
+        group.add(prefsWidget);
+        page.add(group);
+        window.add(page);
+    }
 }

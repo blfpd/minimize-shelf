@@ -1,18 +1,11 @@
 {
   "description": "Minimize shelf in the top panel, with minimized windows of the current workspace.\n\n No settings but you can easily play around with CSS file. This extension is light and should not interfere with GNOME Shell behaviour+logic.",
   "name": "Minimize Shelf",
+  "settings-schema": "org.gnome.shell.extensions.minimize-shelf",
   "shell-version": [
-    "3.30",
-    "3.32",
-    "3.34",
-    "3.36",
-    "40",
-    "41",
-    "42",
-    "43",
-    "44"
+    "48"
   ],
   "url": "https://github.com/batisteo/minimize-shelf",
   "uuid": "minimize-shelf@etenil",
-  "version": 11
+  "version": 12
 }
