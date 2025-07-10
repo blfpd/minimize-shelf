@@ -1,13 +1,8 @@
-const Gio = imports.gi.Gio;
-
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-
-var Direction = class Direction {
-    constructor() {
+export class Direction {
+    constructor(settings) {
         this.Left = 0;
         this.Right = 1;
-        this.settings = getSettings();
+        this.settings = settings;
     }
     get value() {
         return this._value;
@@ -40,18 +35,4 @@ var Direction = class Direction {
         this.settings.set_enum('direction', value);
         this.value = value;
     }
-};
-
-function getSettings() {
-    let schemaSource = Gio.SettingsSchemaSource.new_from_directory(
-        Me.dir.get_child('schemas').get_path(),
-        Gio.SettingsSchemaSource.get_default(),
-        false
-    );
-    let schemaObj = schemaSource.lookup(
-        'org.gnome.shell.extensions.minimize-shelf',
-        true
-    );
-    if (!schemaObj) throw new Error('Minimize-shelf: cannot find schemas');
-    return new Gio.Settings({ settings_schema: schemaObj });
 }
